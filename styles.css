@@ -429,10 +429,24 @@ section.visible {
     margin-bottom: 0.5rem;
 }
 
+.work-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
 .work-type {
     color: #007AFF;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin: 0;
+}
+
+.work-date {
+    color: #888;
+    font-size: 0.9rem;
+    font-weight: 400;
+    margin: 0;
 }
 
 .work-tech {
@@ -785,6 +799,12 @@ section.visible {
     
     .pricing-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .work-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
     }
     
     .profile-img {
