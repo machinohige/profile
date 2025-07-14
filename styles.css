@@ -278,9 +278,9 @@ section.visible {
 .about::before {
     content: 'Quality of KOSEN';
     position: absolute;
-    top: 50%;
+    top: 280px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     font-size: clamp(4rem, 12vw, 8rem);
     font-weight: 900;
     color: rgba(200, 200, 200, 0.15);
@@ -881,6 +881,7 @@ section.visible {
     .about::before {
         font-size: clamp(2.5rem, 8vw, 4rem);
         letter-spacing: 0.02em;
+        top: 320px;
     }
     
     .about-header {
@@ -1090,6 +1091,7 @@ section.visible {
     .about::before {
         font-size: clamp(2rem, 6vw, 3rem);
         letter-spacing: 0.01em;
+        top: 280px;
     }
     
     .about-catchphrase {
