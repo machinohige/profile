@@ -134,6 +134,7 @@ body {
     justify-content: center;
     text-align: center;
     overflow: hidden;
+    width: 100%;
 }
 
 .hero-background {
@@ -161,6 +162,15 @@ body {
     z-index: 1;
     opacity: 0;
     animation: fadeInUp 1s ease-out forwards;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .hero-title {
@@ -170,6 +180,9 @@ body {
     opacity: 0;
     transform: translateY(-50px);
     animation: slideInFromTop 1s ease-out 0.3s forwards;
+    min-height: 1.2em;
+    width: 100%;
+    overflow: hidden;
 }
 
 .hero-subtitle {
@@ -744,9 +757,15 @@ section.visible {
         transform: rotate(45deg) translate(-5px, -6px);
     }
     
+    .hero-content {
+        padding: 2rem 20px;
+        max-width: 100%;
+    }
+    
     .hero-title {
         font-size: 2.5rem;
         line-height: 1.2;
+        min-height: 1.2em;
     }
     
     .hero-subtitle {
@@ -878,9 +897,14 @@ section.visible {
 
 /* Standard phones */
 @media (max-width: 480px) {
+    .hero-content {
+        padding: 4rem 15px;
+    }
+    
     .hero-title {
         font-size: 2rem;
         line-height: 1.1;
+        min-height: 1.1em;
     }
     
     .hero-subtitle {
