@@ -43,6 +43,135 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('orientationchange', function() {
         setTimeout(adjustForDevice, 100);
     });
+    
+    // Dynamic background change for journey section with crossfade effect
+    function setupJourneyBackgrounds() {
+        const journeySection = document.querySelector('.journey');
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        
+        if (!journeySection || timelineItems.length === 0) return;
+        
+        let currentImage = 'suita.png';
+        let isTransitioning = false;
+        
+        // Set initial background
+        journeySection.style.backgroundImage = `url('${currentImage}')`;
+        
+        function crossfadeToNewImage(newImage) {
+            if (isTransitioning || newImage === currentImage) return;
+            
+            isTransitioning = true;
+            
+            // Set the new image to the ::after pseudo-element
+            journeySection.style.setProperty('--next-bg', `url('${newImage}')`);
+            
+            // Update CSS to show the next image
+            const afterElement = window.getComputedStyle(journeySection, '::after');
+            journeySection.style.setProperty('--next-bg-image', `url('${newImage}')`);
+            
+            // Apply the new background to ::after
+            const style = document.createElement('style');
+            style.textContent = `
+                .journey::after {
+                    background-image: url('${newImage}') !important;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Trigger crossfade
+            journeySection.classList.add('transitioning');
+            
+            // After transition completes
+            setTimeout(() => {
+                // Move the new image to the main background
+                journeySection.style.backgroundImage = `url('${newImage}')`;
+                
+                // Reset ::after and remove transition class
+                journeySection.classList.remove('transitioning');
+                
+                // Clean up
+                if (style.parentNode) {
+                    style.parentNode.removeChild(style);
+                }
+                
+                currentImage = newImage;
+                isTransitioning = false;
+            }, 1200); // Match the CSS transition duration
+        }
+        
+        function updateBackground() {
+            const scrollPosition = window.scrollY;
+            const viewportHeight = window.innerHeight;
+            const centerOfScreen = scrollPosition + viewportHeight / 2;
+            
+            let activeImage = 'suita.png'; // Default image
+            
+            timelineItems.forEach(item => {
+                const journeyTop = journeySection.offsetTop;
+                const itemTop = item.offsetTop + journeyTop;
+                const itemHeight = item.offsetHeight;
+                const itemCenter = itemTop + itemHeight / 2;
+                
+                // Check if item center is above the center of screen
+                if (itemCenter <= centerOfScreen) {
+                    const imageName = item.getAttribute('data-image');
+                    if (imageName) {
+                        activeImage = imageName;
+                    }
+                }
+            });
+            
+            // Trigger crossfade if image changed
+            crossfadeToNewImage(activeImage);
+        }
+        
+        // Throttled scroll handler with intersection observer for better performance
+        const observerOptions = {
+            root: null,
+            rootMargin: '-50% 0px -50% 0px', // Trigger when center of item hits center of viewport
+            threshold: 0
+        };
+        
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const imageName = entry.target.getAttribute('data-image');
+                    if (imageName) {
+                        crossfadeToNewImage(imageName);
+                    }
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all timeline items
+        timelineItems.forEach(item => {
+            imageObserver.observe(item);
+        });
+        
+        // Fallback scroll handler for smoother experience
+        let ticking = false;
+        function handleScroll() {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    updateBackground();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+        
+        // Initial call
+        updateBackground();
+        
+        // Add scroll listener as fallback
+        window.addEventListener('scroll', handleScroll);
+        
+        // Update on resize
+        window.addEventListener('resize', updateBackground);
+    }
+    
+    // Initialize journey backgrounds
+    setupJourneyBackgrounds();
     // Mobile Navigation
     const hamburger = document.querySelector('.hamburger');
     const navMenu = document.querySelector('.nav-menu');
@@ -182,17 +311,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Typing effect for hero title
+    // Typing effect for hero title with layout stability
     function typeWriter(element, text, speed = 100) {
         let i = 0;
+        // Create invisible placeholder to maintain layout
+        const tempElement = element.cloneNode(true);
+        tempElement.style.visibility = 'hidden';
+        tempElement.style.position = 'absolute';
+        tempElement.style.top = '0';
+        tempElement.style.left = '0';
+        tempElement.textContent = text;
+        element.parentNode.appendChild(tempElement);
+        
+        // Clear original text and start typing
         element.innerHTML = '';
-        element.style.opacity = '1'; // Ensure visibility during typing
+        element.style.opacity = '1';
+        element.style.visibility = 'visible';
         
         function type() {
             if (i < text.length) {
                 element.innerHTML += text.charAt(i);
                 i++;
                 setTimeout(type, speed);
+            } else {
+                // Remove placeholder after typing is complete
+                if (tempElement.parentNode) {
+                    tempElement.parentNode.removeChild(tempElement);
+                }
             }
         }
         
@@ -205,14 +350,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const heroContent = document.querySelector('.hero-content');
     
     if (heroTitle && heroSubtitle && heroContent) {
-        // Immediately hide text content to prevent flash
+        // Store original text and hide it
+        const originalText = heroTitle.textContent;
         heroTitle.style.opacity = '0';
         heroTitle.style.visibility = 'hidden';
         
+        // Ensure the hero container maintains its height
+        heroContent.style.minHeight = heroContent.offsetHeight + 'px';
+        
         // Start animations after a short delay
         setTimeout(() => {
-            heroTitle.style.visibility = 'visible';
-            const originalText = heroTitle.textContent;
             typeWriter(heroTitle, originalText, 80);
         }, 1300); // Start after hero-content animation completes
     }
