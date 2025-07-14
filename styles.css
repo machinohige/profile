@@ -1,3 +1,44 @@
+/* CSS Custom Properties */
+:root {
+    --vh: 1vh;
+}
+
+/* Dynamic device-specific classes */
+.tall-device .hero {
+    height: calc(var(--vh, 1vh) * 100);
+    min-height: calc(var(--vh, 1vh) * 100);
+}
+
+.tall-device section {
+    padding: 80px 0;
+}
+
+.tall-device .hero-content {
+    padding: 4rem 0;
+}
+
+.wide-landscape .hero-title {
+    font-size: 2.5rem;
+}
+
+.wide-landscape .hero-subtitle {
+    font-size: 1.2rem;
+}
+
+.ultra-narrow .hero-title {
+    font-size: 1.6rem;
+    line-height: 1.1;
+}
+
+.ultra-narrow .nav-logo {
+    font-size: 1.2rem;
+}
+
+.ultra-narrow .timeline-year {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+}
+
 /* Reset and Base Styles */
 * {
     margin: 0;
@@ -113,25 +154,31 @@ body {
 .hero-content {
     color: white;
     z-index: 1;
-    animation: fadeInUp 1s ease-out;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out forwards;
 }
 
 .hero-title {
     font-size: 3.5rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    animation: slideInFromTop 1s ease-out 0.3s both;
+    opacity: 0;
+    transform: translateY(-50px);
+    animation: slideInFromTop 1s ease-out 0.3s forwards;
 }
 
 .hero-subtitle {
     font-size: 1.5rem;
     font-weight: 300;
     margin-bottom: 2rem;
-    animation: slideInFromBottom 1s ease-out 0.6s both;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: slideInFromBottom 1s ease-out 0.6s forwards;
 }
 
 .hero-cta {
-    animation: fadeIn 1s ease-out 0.9s both;
+    opacity: 0;
+    animation: fadeIn 1s ease-out 0.9s forwards;
 }
 
 .cta-button {
@@ -637,6 +684,23 @@ section.visible {
 }
 
 /* Responsive Design */
+
+/* Large tablets and small desktops */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 30px;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+    }
+    
+    .section-title {
+        font-size: 2.2rem;
+    }
+}
+
+/* Tablets */
 @media (max-width: 768px) {
     .hamburger {
         display: flex;
@@ -677,6 +741,7 @@ section.visible {
     
     .hero-title {
         font-size: 2.5rem;
+        line-height: 1.2;
     }
     
     .hero-subtitle {
@@ -699,6 +764,12 @@ section.visible {
     .profile-img {
         width: 150px;
         height: 150px;
+    }
+    
+    .profile-placeholder {
+        width: 150px;
+        height: 150px;
+        font-size: 3rem;
     }
     
     .about-catchphrase {
@@ -766,7 +837,33 @@ section.visible {
     }
     
     .container {
-        padding: 0 15px;
+        padding: 0 20px;
+    }
+    
+    section {
+        padding: 70px 0;
+    }
+}
+
+/* Large phones (Galaxy S series, iPhone Plus/Pro Max) */
+@media (max-width: 480px) and (min-height: 700px) {
+    .hero {
+        min-height: 100vh;
+        height: auto;
+    }
+    
+    .hero-content {
+        padding: 2rem 0;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 2.5rem;
     }
     
     section {
@@ -774,9 +871,11 @@ section.visible {
     }
 }
 
+/* Standard phones */
 @media (max-width: 480px) {
     .hero-title {
         font-size: 2rem;
+        line-height: 1.1;
     }
     
     .hero-subtitle {
@@ -789,12 +888,14 @@ section.visible {
     
     .profile-grid {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
     
     .skills-grid,
     .services-grid,
     .works-grid {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
     
     .pricing-grid {
@@ -810,6 +911,12 @@ section.visible {
     .profile-img {
         width: 120px;
         height: 120px;
+    }
+    
+    .profile-placeholder {
+        width: 120px;
+        height: 120px;
+        font-size: 2.5rem;
     }
     
     /* タイムライン調整 */
@@ -850,6 +957,122 @@ section.visible {
     .about-catchphrase {
         font-size: 1.3rem;
         text-align: center;
+        line-height: 1.3;
+    }
+    
+    .container {
+        padding: 0 15px;
+    }
+}
+
+/* Very small phones */
+@media (max-width: 360px) {
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+    }
+    
+    .nav-container {
+        padding: 0.8rem 0.8rem;
+    }
+    
+    .timeline-year {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+        margin-left: 25px;
+    }
+    
+    .timeline-content {
+        margin-left: 25px;
+        padding: 0.8rem;
+    }
+    
+    .timeline-content::before {
+        left: -22px;
+    }
+    
+    .container {
+        padding: 0 12px;
+    }
+}
+
+/* Galaxy Fold and similar ultra-narrow devices */
+@media (max-width: 320px) {
+    .hero-title {
+        font-size: 1.6rem;
+    }
+    
+    .nav-logo {
+        font-size: 1.2rem;
+    }
+    
+    .timeline-year {
+        margin-left: 20px;
+        min-width: 80px;
+    }
+    
+    .timeline-content {
+        margin-left: 20px;
+    }
+}
+
+/* Extra tall phones (Galaxy Note, etc.) */
+@media (max-width: 480px) and (min-height: 800px) {
+    .hero {
+        height: 100vh;
+        min-height: 800px;
+    }
+    
+    .hero-content {
+        padding: 3rem 0;
+    }
+    
+    section {
+        padding: 80px 0;
+    }
+    
+    .about-header {
+        margin-bottom: 4rem;
+    }
+    
+    .profile-grid {
+        gap: 2rem;
+    }
+}
+
+/* Landscape orientation on phones */
+@media (max-width: 768px) and (orientation: landscape) {
+    .hero {
+        height: 100vh;
+        min-height: 500px;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    section {
+        padding: 50px 0;
+    }
+    
+    .about-header {
+        flex-direction: row;
+        text-align: left;
+    }
+    
+    .timeline-item {
+        margin-bottom: 1.2rem;
     }
 }
 
