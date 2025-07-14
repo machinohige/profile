@@ -61,6 +61,8 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 /* Navigation */
@@ -72,15 +74,18 @@ body {
     backdrop-filter: blur(20px);
     z-index: 1000;
     transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
 .nav-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
+    padding: 1rem 20px;
     max-width: 1200px;
     margin: 0 auto;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .nav-logo {
@@ -883,7 +888,7 @@ section.visible {
     }
     
     .nav-container {
-        padding: 1rem 1rem;
+        padding: 1rem 15px;
     }
     
     .profile-grid {
@@ -980,7 +985,7 @@ section.visible {
     }
     
     .nav-container {
-        padding: 0.8rem 0.8rem;
+        padding: 0.8rem 12px;
     }
     
     .timeline-year {
