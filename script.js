@@ -96,8 +96,26 @@ document.addEventListener('DOMContentLoaded', function() {
             const imageExists = await checkImageExists(newImage);
             
             if (!imageExists) {
-                console.warn(`⚠️ Image not found, keeping current background: ${currentImage || 'default'}`);
-                return;
+                console.warn(`⚠️ Image not found: ${newImage}`);
+                
+                // Try fallback for missing images (use available ones)
+                const availableImages = ['suita.png', 'tokyo.png'];
+                const fallbackImage = availableImages.includes(newImage) ? newImage : 
+                                    availableImages.find(img => img !== currentImage) || availableImages[0];
+                
+                if (fallbackImage && fallbackImage !== newImage) {
+                    console.log(`🔄 Using fallback image: ${fallbackImage}`);
+                    const fallbackExists = await checkImageExists(fallbackImage);
+                    if (fallbackExists) {
+                        newImage = fallbackImage;
+                    } else {
+                        console.warn(`⚠️ Keeping current background: ${currentImage || 'default'}`);
+                        return;
+                    }
+                } else {
+                    console.warn(`⚠️ No fallback available, keeping current background: ${currentImage || 'default'}`);
+                    return;
+                }
             }
             
             isTransitioning = true;
@@ -210,10 +228,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Debug: Log all expected images
         console.log('🖼️ Expected images:');
-        timelineItems.forEach(item => {
+        timelineItems.forEach((item, index) => {
             const imageName = item.getAttribute('data-image');
-            console.log(`  - ${imageName}`);
+            console.log(`  ${index + 1}. ${imageName || 'MISSING DATA-IMAGE!'}`);
         });
+        
+        // Additional debug info
+        console.log('📁 Current images you have: suita.png, tokyo.png');
+        console.log('🎯 Missing images will show as: ❌ Image failed to load');
+        console.log('✅ Available images will show as: ✅ Image loaded successfully');
     }
     
     // Initialize journey backgrounds
