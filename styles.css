@@ -48,6 +48,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -55,6 +56,7 @@ body {
     line-height: 1.6;
     color: #333;
     overflow-x: hidden;
+    width: 100%;
 }
 
 .container {
@@ -69,6 +71,8 @@ body {
 .navbar {
     position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     width: 100%;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
@@ -81,11 +85,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 20px;
+    padding: 1rem 0;
     max-width: 1200px;
     margin: 0 auto;
     box-sizing: border-box;
     width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .nav-logo {
@@ -338,6 +344,45 @@ section.visible {
 /* Journey Section */
 .journey {
     background: white;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.journey::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.85);
+    z-index: 1;
+}
+
+.journey::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    opacity: 0;
+    transition: opacity 1.2s ease-in-out;
+    z-index: 0;
+}
+
+.journey.transitioning::after {
+    opacity: 1;
+}
+
+.journey .container {
+    position: relative;
+    z-index: 2;
 }
 
 .timeline {
@@ -912,7 +957,8 @@ section.visible {
     }
     
     .nav-container {
-        padding: 1rem 15px;
+        padding-left: 15px;
+        padding-right: 15px;
     }
     
     .profile-grid {
@@ -1009,7 +1055,8 @@ section.visible {
     }
     
     .nav-container {
-        padding: 0.8rem 12px;
+        padding-left: 12px;
+        padding-right: 12px;
     }
     
     .timeline-year {
