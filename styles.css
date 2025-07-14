@@ -734,6 +734,34 @@ section.visible {
     }
 }
 
+@keyframes crossfade {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Smooth background transition for journey section */
+.journey {
+    background-repeat: no-repeat;
+}
+
+.journey::after {
+    background-repeat: no-repeat;
+}
+
+/* Enhanced timeline item animations */
+.timeline-item {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.timeline-item.in-view {
+    transform: translateX(0);
+    opacity: 1;
+}
+
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% {
         transform: translateY(0) translateX(-50%);
