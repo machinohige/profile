@@ -1,5 +1,48 @@
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {
+    
+    // Dynamic viewport height adjustment for mobile devices
+    function setViewportHeight() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    // Initial call
+    setViewportHeight();
+    
+    // Update on resize and orientation change
+    window.addEventListener('resize', setViewportHeight);
+    window.addEventListener('orientationchange', function() {
+        setTimeout(setViewportHeight, 100);
+    });
+    
+    // Device-specific adjustments
+    function adjustForDevice() {
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        const aspectRatio = screenHeight / screenWidth;
+        
+        // Galaxy-like devices (tall aspect ratio)
+        if (aspectRatio > 2 && screenWidth <= 480) {
+            document.body.classList.add('tall-device');
+        }
+        
+        // Very wide devices in landscape
+        if (aspectRatio < 0.6 && screenWidth > screenHeight) {
+            document.body.classList.add('wide-landscape');
+        }
+        
+        // Ultra-narrow devices (Galaxy Fold, etc.)
+        if (screenWidth <= 320) {
+            document.body.classList.add('ultra-narrow');
+        }
+    }
+    
+    adjustForDevice();
+    window.addEventListener('resize', adjustForDevice);
+    window.addEventListener('orientationchange', function() {
+        setTimeout(adjustForDevice, 100);
+    });
     // Mobile Navigation
     const hamburger = document.querySelector('.hamburger');
     const navMenu = document.querySelector('.nav-menu');
@@ -143,6 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function typeWriter(element, text, speed = 100) {
         let i = 0;
         element.innerHTML = '';
+        element.style.opacity = '1'; // Ensure visibility during typing
         
         function type() {
             if (i < text.length) {
@@ -155,14 +199,23 @@ document.addEventListener('DOMContentLoaded', function() {
         type();
     }
     
-    // Initialize typing effect after a delay
-    setTimeout(() => {
-        const heroTitle = document.querySelector('.hero-title');
-        if (heroTitle) {
+    // Initialize hero elements with hidden state and then animate
+    const heroTitle = document.querySelector('.hero-title');
+    const heroSubtitle = document.querySelector('.hero-subtitle');
+    const heroContent = document.querySelector('.hero-content');
+    
+    if (heroTitle && heroSubtitle && heroContent) {
+        // Immediately hide text content to prevent flash
+        heroTitle.style.opacity = '0';
+        heroTitle.style.visibility = 'hidden';
+        
+        // Start animations after a short delay
+        setTimeout(() => {
+            heroTitle.style.visibility = 'visible';
             const originalText = heroTitle.textContent;
             typeWriter(heroTitle, originalText, 80);
-        }
-    }, 1000);
+        }, 1300); // Start after hero-content animation completes
+    }
     
     // Add counter animation for numbers
     function animateCounter(element, target, duration = 2000) {
