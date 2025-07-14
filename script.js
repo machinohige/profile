@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Set static background image
         async function initializeBackground() {
-            const staticImage = 'suita.jpeg';
+            const staticImage = 'suita.png';
             console.log(`🔍 Testing image: ${staticImage}`);
             
             const imageExists = await checkImageExists(staticImage);
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Initialize background
         initializeBackground();
         
-        console.log('🖼️ Journey section set to static background: suita.jpeg');
+        console.log('🖼️ Journey section set to static background: suita.png');
     }
     
     // Initialize journey backgrounds
