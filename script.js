@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let currentImage = null;
         let isTransitioning = false;
+        let transitionTimeout = null;
         
         // Function to preload and check if image exists
         function checkImageExists(imagePath) {
@@ -118,52 +119,67 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
-            isTransitioning = true;
-            
-            // Create a temporary style element for the transition
-            const styleId = 'journey-bg-transition';
-            let style = document.getElementById(styleId);
-            if (!style) {
-                style = document.createElement('style');
-                style.id = styleId;
-                document.head.appendChild(style);
+            // Clear any existing transition
+            if (transitionTimeout) {
+                clearTimeout(transitionTimeout);
+                transitionTimeout = null;
             }
             
-            // Set up the crossfade
-            style.textContent = `
-                .journey::after {
-                    background-image: url('${newImage}') !important;
-                    opacity: 1 !important;
-                }
+            isTransitioning = true;
+            
+            // Create overlay element for smooth transition
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url('${newImage}');
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                opacity: 0;
+                z-index: 0;
+                transition: opacity 1.5s ease-in-out;
+                pointer-events: none;
             `;
             
-            // After transition completes
-            setTimeout(() => {
-                // Move the new image to the main background
+            journeySection.appendChild(overlay);
+            
+            // Force reflow to ensure styles are applied
+            overlay.offsetHeight;
+            
+            // Start the fade-in
+            requestAnimationFrame(() => {
+                overlay.style.opacity = '1';
+            });
+            
+            // Complete the transition after animation
+            transitionTimeout = setTimeout(() => {
+                // Update the main background
                 journeySection.style.backgroundImage = `url('${newImage}')`;
                 
-                // Reset ::after
-                style.textContent = `
-                    .journey::after {
-                        opacity: 0 !important;
-                    }
-                `;
+                // Remove the overlay
+                if (overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
                 
                 currentImage = newImage;
                 isTransitioning = false;
+                transitionTimeout = null;
                 console.log(`✅ Background changed to: ${newImage}`);
-            }, 1200);
+            }, 1500);
         }
         
         function updateBackground() {
+            if (isTransitioning) return; // Skip if already transitioning
+            
             const scrollPosition = window.scrollY;
             const viewportHeight = window.innerHeight;
             const centerOfScreen = scrollPosition + viewportHeight / 2;
             
             let activeImage = 'suita.png'; // Default image
-            let foundActiveItem = null;
-            
-            console.log(`📜 Scroll update: position=${scrollPosition}, center=${centerOfScreen}`);
             
             timelineItems.forEach((item, index) => {
                 const journeyTop = journeySection.offsetTop;
@@ -172,84 +188,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 const itemCenter = itemTop + itemHeight / 2;
                 const imageName = item.getAttribute('data-image');
                 
-                console.log(`📍 Item ${index + 1} (${imageName}): center=${itemCenter}, screen center=${centerOfScreen}, passed=${itemCenter <= centerOfScreen}`);
-                
                 // Check if item center is above or at the center of screen
-                if (itemCenter <= centerOfScreen) {
-                    if (imageName) {
-                        activeImage = imageName;
-                        foundActiveItem = item;
-                        console.log(`🎯 Active item updated to: ${imageName} (item ${index + 1})`);
-                    }
+                if (itemCenter <= centerOfScreen && imageName) {
+                    activeImage = imageName;
                 }
             });
-            
-            console.log(`🖼️ Final active image: ${activeImage}, current: ${currentImage}`);
             
             // Trigger crossfade if image changed
             if (activeImage !== currentImage) {
                 console.log(`🔄 Image change detected: ${currentImage} → ${activeImage}`);
                 crossfadeToNewImage(activeImage);
-            } else {
-                console.log(`⏸️ No image change needed`);
             }
         }
         
         // Initialize with error checking
         initializeBackground();
         
-        // Intersection Observer for better performance
-        const observerOptions = {
-            root: null,
-            rootMargin: '-50% 0px -50% 0px',
-            threshold: [0, 0.25, 0.5, 0.75, 1]
-        };
-        
-        const imageObserver = new IntersectionObserver((entries) => {
-            console.log(`👁️ Intersection Observer triggered with ${entries.length} entries`);
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const imageName = entry.target.getAttribute('data-image');
-                    console.log(`👀 Item in view: ${imageName}, ratio: ${entry.intersectionRatio}`);
-                    if (imageName && imageName !== currentImage) {
-                        console.log(`🔄 Observer triggered change to: ${imageName}`);
-                        crossfadeToNewImage(imageName);
-                    }
-                }
-            });
-        }, observerOptions);
-        
-        // Observe all timeline items
-        timelineItems.forEach((item, index) => {
-            console.log(`👁️ Observing item ${index + 1}: ${item.getAttribute('data-image')}`);
-            imageObserver.observe(item);
-        });
-        
-        // Enhanced scroll handler as fallback
-        let ticking = false;
+        // Throttled scroll handler for better performance
+        let scrollTicking = false;
         function handleScroll() {
-            if (!ticking) {
+            if (!scrollTicking && !isTransitioning) {
                 requestAnimationFrame(() => {
                     updateBackground();
-                    ticking = false;
+                    scrollTicking = false;
                 });
-                ticking = true;
+                scrollTicking = true;
             }
         }
         
         console.log('🎬 Setting up scroll listeners...');
-        
-        // Add multiple scroll listeners for redundancy
         window.addEventListener('scroll', handleScroll, { passive: true });
-        document.addEventListener('scroll', handleScroll, { passive: true });
         window.addEventListener('resize', updateBackground);
-        
-        // Force update on any user interaction
-        ['mousewheel', 'DOMMouseScroll', 'touchmove', 'keydown'].forEach(event => {
-            window.addEventListener(event, () => {
-                setTimeout(updateBackground, 100);
-            }, { passive: true });
-        });
         
         // Manual trigger for testing
         setTimeout(() => {
@@ -257,40 +226,14 @@ document.addEventListener('DOMContentLoaded', function() {
             updateBackground();
         }, 2000);
         
-        // Additional test - force scroll check every 2 seconds
-        setInterval(() => {
-            if (window.scrollY > 0) {
-                console.log('⏰ Periodic check triggered');
-                updateBackground();
-            }
-        }, 2000);
-        
-        // Debug: Log all expected images and positions
+        // Debug: Log all expected images
         console.log('🖼️ Expected images:');
         timelineItems.forEach((item, index) => {
             const imageName = item.getAttribute('data-image');
             console.log(`  ${index + 1}. ${imageName || 'MISSING DATA-IMAGE!'}`);
         });
         
-        // Additional debug info
         console.log('📁 Current images you have: suita.png, tokyo.png');
-        console.log('🎯 Missing images will show as: ❌ Image failed to load');
-        console.log('✅ Available images will show as: ✅ Image loaded successfully');
-        
-        // Debug journey section position
-        setTimeout(() => {
-            const journeyTop = journeySection.offsetTop;
-            const journeyHeight = journeySection.offsetHeight;
-            console.log(`📐 Journey section: top=${journeyTop}, height=${journeyHeight}`);
-            
-            timelineItems.forEach((item, index) => {
-                const itemTop = item.offsetTop + journeyTop;
-                const itemHeight = item.offsetHeight;
-                const itemCenter = itemTop + itemHeight / 2;
-                const imageName = item.getAttribute('data-image');
-                console.log(`📍 Item ${index + 1} (${imageName}): top=${itemTop}, center=${itemCenter}, height=${itemHeight}`);
-            });
-        }, 1000);
     }
     
     // Initialize journey backgrounds
