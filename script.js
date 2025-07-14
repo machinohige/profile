@@ -51,52 +51,90 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!journeySection || timelineItems.length === 0) return;
         
-        let currentImage = 'suita.png';
+        let currentImage = null;
         let isTransitioning = false;
         
-        // Set initial background
-        journeySection.style.backgroundImage = `url('${currentImage}')`;
+        // Function to preload and check if image exists
+        function checkImageExists(imagePath) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    console.log(`✅ Image loaded successfully: ${imagePath}`);
+                    resolve(true);
+                };
+                img.onerror = () => {
+                    console.warn(`❌ Image failed to load: ${imagePath}`);
+                    resolve(false);
+                };
+                img.src = imagePath;
+            });
+        }
         
-        function crossfadeToNewImage(newImage) {
+        // Test initial image
+        async function initializeBackground() {
+            const testImage = 'suita.png';
+            console.log(`🔍 Testing image: ${testImage}`);
+            
+            const imageExists = await checkImageExists(testImage);
+            
+            if (imageExists) {
+                currentImage = testImage;
+                journeySection.style.backgroundImage = `url('${testImage}')`;
+                console.log(`🎨 Background set to: ${testImage}`);
+            } else {
+                console.log('📝 Using fallback: solid color background');
+                journeySection.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
+            }
+        }
+        
+        async function crossfadeToNewImage(newImage) {
             if (isTransitioning || newImage === currentImage) return;
+            
+            console.log(`🔄 Attempting to change background to: ${newImage}`);
+            
+            // Check if new image exists
+            const imageExists = await checkImageExists(newImage);
+            
+            if (!imageExists) {
+                console.warn(`⚠️ Image not found, keeping current background: ${currentImage || 'default'}`);
+                return;
+            }
             
             isTransitioning = true;
             
-            // Set the new image to the ::after pseudo-element
-            journeySection.style.setProperty('--next-bg', `url('${newImage}')`);
+            // Create a temporary style element for the transition
+            const styleId = 'journey-bg-transition';
+            let style = document.getElementById(styleId);
+            if (!style) {
+                style = document.createElement('style');
+                style.id = styleId;
+                document.head.appendChild(style);
+            }
             
-            // Update CSS to show the next image
-            const afterElement = window.getComputedStyle(journeySection, '::after');
-            journeySection.style.setProperty('--next-bg-image', `url('${newImage}')`);
-            
-            // Apply the new background to ::after
-            const style = document.createElement('style');
+            // Set up the crossfade
             style.textContent = `
                 .journey::after {
                     background-image: url('${newImage}') !important;
+                    opacity: 1 !important;
                 }
             `;
-            document.head.appendChild(style);
-            
-            // Trigger crossfade
-            journeySection.classList.add('transitioning');
             
             // After transition completes
             setTimeout(() => {
                 // Move the new image to the main background
                 journeySection.style.backgroundImage = `url('${newImage}')`;
                 
-                // Reset ::after and remove transition class
-                journeySection.classList.remove('transitioning');
-                
-                // Clean up
-                if (style.parentNode) {
-                    style.parentNode.removeChild(style);
-                }
+                // Reset ::after
+                style.textContent = `
+                    .journey::after {
+                        opacity: 0 !important;
+                    }
+                `;
                 
                 currentImage = newImage;
                 isTransitioning = false;
-            }, 1200); // Match the CSS transition duration
+                console.log(`✅ Background changed to: ${newImage}`);
+            }, 1200);
         }
         
         function updateBackground() {
@@ -122,13 +160,19 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             // Trigger crossfade if image changed
-            crossfadeToNewImage(activeImage);
+            if (activeImage !== currentImage) {
+                console.log(`🎯 New image detected: ${activeImage}`);
+                crossfadeToNewImage(activeImage);
+            }
         }
         
-        // Throttled scroll handler with intersection observer for better performance
+        // Initialize with error checking
+        initializeBackground();
+        
+        // Intersection Observer for better performance
         const observerOptions = {
             root: null,
-            rootMargin: '-50% 0px -50% 0px', // Trigger when center of item hits center of viewport
+            rootMargin: '-50% 0px -50% 0px',
             threshold: 0
         };
         
@@ -136,7 +180,8 @@ document.addEventListener('DOMContentLoaded', function() {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const imageName = entry.target.getAttribute('data-image');
-                    if (imageName) {
+                    if (imageName && imageName !== currentImage) {
+                        console.log(`👁️ Timeline item in view: ${imageName}`);
                         crossfadeToNewImage(imageName);
                     }
                 }
@@ -148,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
             imageObserver.observe(item);
         });
         
-        // Fallback scroll handler for smoother experience
+        // Fallback scroll handler
         let ticking = false;
         function handleScroll() {
             if (!ticking) {
@@ -160,14 +205,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Initial call
-        updateBackground();
-        
-        // Add scroll listener as fallback
         window.addEventListener('scroll', handleScroll);
-        
-        // Update on resize
         window.addEventListener('resize', updateBackground);
+        
+        // Debug: Log all expected images
+        console.log('🖼️ Expected images:');
+        timelineItems.forEach(item => {
+            const imageName = item.getAttribute('data-image');
+            console.log(`  - ${imageName}`);
+        });
     }
     
     // Initialize journey backgrounds
