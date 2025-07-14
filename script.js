@@ -44,18 +44,13 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(adjustForDevice, 100);
     });
     
-    // Dynamic background change for journey section with crossfade effect
+    // Static background for journey section
     function setupJourneyBackgrounds() {
         const journeySection = document.querySelector('.journey');
-        const timelineItems = document.querySelectorAll('.timeline-item');
         
-        if (!journeySection || timelineItems.length === 0) return;
+        if (!journeySection) return;
         
-        let currentImage = null;
-        let isTransitioning = false;
-        let transitionTimeout = null;
-        
-        // Function to preload and check if image exists
+        // Function to check if image exists
         function checkImageExists(imagePath) {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -71,169 +66,26 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Test initial image
+        // Set static background image
         async function initializeBackground() {
-            const testImage = 'suita.png';
-            console.log(`🔍 Testing image: ${testImage}`);
+            const staticImage = 'suita.jpeg';
+            console.log(`🔍 Testing image: ${staticImage}`);
             
-            const imageExists = await checkImageExists(testImage);
+            const imageExists = await checkImageExists(staticImage);
             
             if (imageExists) {
-                currentImage = testImage;
-                journeySection.style.backgroundImage = `url('${testImage}')`;
-                console.log(`🎨 Background set to: ${testImage}`);
+                journeySection.style.backgroundImage = `url('${staticImage}')`;
+                console.log(`🎨 Static background set to: ${staticImage}`);
             } else {
-                console.log('📝 Using fallback: solid color background');
+                console.log('📝 Using fallback: gradient background');
                 journeySection.style.background = 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)';
             }
         }
         
-        async function crossfadeToNewImage(newImage) {
-            if (isTransitioning || newImage === currentImage) return;
-            
-            console.log(`🔄 Attempting to change background to: ${newImage}`);
-            
-            // Check if new image exists
-            const imageExists = await checkImageExists(newImage);
-            
-            if (!imageExists) {
-                console.warn(`⚠️ Image not found: ${newImage}`);
-                
-                // Try fallback for missing images (use available ones)
-                const availableImages = ['suita.png', 'tokyo.png'];
-                const fallbackImage = availableImages.includes(newImage) ? newImage : 
-                                    availableImages.find(img => img !== currentImage) || availableImages[0];
-                
-                if (fallbackImage && fallbackImage !== newImage) {
-                    console.log(`🔄 Using fallback image: ${fallbackImage}`);
-                    const fallbackExists = await checkImageExists(fallbackImage);
-                    if (fallbackExists) {
-                        newImage = fallbackImage;
-                    } else {
-                        console.warn(`⚠️ Keeping current background: ${currentImage || 'default'}`);
-                        return;
-                    }
-                } else {
-                    console.warn(`⚠️ No fallback available, keeping current background: ${currentImage || 'default'}`);
-                    return;
-                }
-            }
-            
-            // Clear any existing transition
-            if (transitionTimeout) {
-                clearTimeout(transitionTimeout);
-                transitionTimeout = null;
-            }
-            
-            isTransitioning = true;
-            
-            // Create overlay element for smooth transition
-            const overlay = document.createElement('div');
-            overlay.style.cssText = `
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background-image: url('${newImage}');
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
-                opacity: 0;
-                z-index: 0;
-                transition: opacity 1.5s ease-in-out;
-                pointer-events: none;
-            `;
-            
-            journeySection.appendChild(overlay);
-            
-            // Force reflow to ensure styles are applied
-            overlay.offsetHeight;
-            
-            // Start the fade-in
-            requestAnimationFrame(() => {
-                overlay.style.opacity = '1';
-            });
-            
-            // Complete the transition after animation
-            transitionTimeout = setTimeout(() => {
-                // Update the main background
-                journeySection.style.backgroundImage = `url('${newImage}')`;
-                
-                // Remove the overlay
-                if (overlay.parentNode) {
-                    overlay.parentNode.removeChild(overlay);
-                }
-                
-                currentImage = newImage;
-                isTransitioning = false;
-                transitionTimeout = null;
-                console.log(`✅ Background changed to: ${newImage}`);
-            }, 1500);
-        }
-        
-        function updateBackground() {
-            if (isTransitioning) return; // Skip if already transitioning
-            
-            const scrollPosition = window.scrollY;
-            const viewportHeight = window.innerHeight;
-            const centerOfScreen = scrollPosition + viewportHeight / 2;
-            
-            let activeImage = 'suita.png'; // Default image
-            
-            timelineItems.forEach((item, index) => {
-                const journeyTop = journeySection.offsetTop;
-                const itemTop = item.offsetTop + journeyTop;
-                const itemHeight = item.offsetHeight;
-                const itemCenter = itemTop + itemHeight / 2;
-                const imageName = item.getAttribute('data-image');
-                
-                // Check if item center is above or at the center of screen
-                if (itemCenter <= centerOfScreen && imageName) {
-                    activeImage = imageName;
-                }
-            });
-            
-            // Trigger crossfade if image changed
-            if (activeImage !== currentImage) {
-                console.log(`🔄 Image change detected: ${currentImage} → ${activeImage}`);
-                crossfadeToNewImage(activeImage);
-            }
-        }
-        
-        // Initialize with error checking
+        // Initialize background
         initializeBackground();
         
-        // Throttled scroll handler for better performance
-        let scrollTicking = false;
-        function handleScroll() {
-            if (!scrollTicking && !isTransitioning) {
-                requestAnimationFrame(() => {
-                    updateBackground();
-                    scrollTicking = false;
-                });
-                scrollTicking = true;
-            }
-        }
-        
-        console.log('🎬 Setting up scroll listeners...');
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        window.addEventListener('resize', updateBackground);
-        
-        // Manual trigger for testing
-        setTimeout(() => {
-            console.log('🧪 Manual test trigger after 2 seconds');
-            updateBackground();
-        }, 2000);
-        
-        // Debug: Log all expected images
-        console.log('🖼️ Expected images:');
-        timelineItems.forEach((item, index) => {
-            const imageName = item.getAttribute('data-image');
-            console.log(`  ${index + 1}. ${imageName || 'MISSING DATA-IMAGE!'}`);
-        });
-        
-        console.log('📁 Current images you have: suita.png, tokyo.png');
+        console.log('🖼️ Journey section set to static background: suita.jpeg');
     }
     
     // Initialize journey backgrounds
