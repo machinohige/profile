@@ -191,15 +191,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const observerOptions = {
             root: null,
             rootMargin: '-50% 0px -50% 0px',
-            threshold: 0
+            threshold: [0, 0.25, 0.5, 0.75, 1]
         };
         
         const imageObserver = new IntersectionObserver((entries) => {
+            console.log(`👁️ Intersection Observer triggered with ${entries.length} entries`);
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const imageName = entry.target.getAttribute('data-image');
+                    console.log(`👀 Item in view: ${imageName}, ratio: ${entry.intersectionRatio}`);
                     if (imageName && imageName !== currentImage) {
-                        console.log(`👁️ Timeline item in view: ${imageName}`);
+                        console.log(`🔄 Observer triggered change to: ${imageName}`);
                         crossfadeToNewImage(imageName);
                     }
                 }
@@ -207,15 +209,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }, observerOptions);
         
         // Observe all timeline items
-        timelineItems.forEach(item => {
+        timelineItems.forEach((item, index) => {
+            console.log(`👁️ Observing item ${index + 1}: ${item.getAttribute('data-image')}`);
             imageObserver.observe(item);
         });
         
-        // Fallback scroll handler
+        // Enhanced scroll handler as fallback
         let ticking = false;
         function handleScroll() {
             if (!ticking) {
                 requestAnimationFrame(() => {
+                    console.log(`📜 Scroll event: position=${window.scrollY}`);
                     updateBackground();
                     ticking = false;
                 });
@@ -223,8 +227,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
+        console.log('🎬 Setting up scroll listeners...');
         window.addEventListener('scroll', handleScroll);
         window.addEventListener('resize', updateBackground);
+        
+        // Manual trigger for testing
+        setTimeout(() => {
+            console.log('🧪 Manual test trigger after 2 seconds');
+            updateBackground();
+        }, 2000);
         
         // Debug: Log all expected images
         console.log('🖼️ Expected images:');
