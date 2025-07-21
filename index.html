@@ -3,8 +3,981 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>マチノヒゲ - 学生発の技術力と発想力で、理想を形に</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>マチノヒゲ - 技術力と発想力で、理想を形に</title>
+    <style>
+        /* CSS Custom Properties */
+:root {
+    --vh: 1vh;
+}
+
+/* Dynamic device-specific classes */
+.tall-device .hero {
+    height: calc(var(--vh, 1vh) * 100);
+    min-height: calc(var(--vh, 1vh) * 100);
+}
+
+.tall-device section {
+    padding: 80px 0;
+}
+
+.tall-device .hero-content {
+    padding: 4rem 0;
+}
+
+.wide-landscape .hero-title {
+    font-size: 2.5rem;
+}
+
+.wide-landscape .hero-subtitle {
+    font-size: 1.2rem;
+}
+
+.ultra-narrow .hero-title {
+    font-size: 1.6rem;
+    line-height: 1.1;
+}
+
+.ultra-narrow .nav-logo {
+    font-size: 1.2rem;
+}
+
+.ultra-narrow .timeline-year {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Navigation */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.nav-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007AFF;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-menu a:hover {
+    color: #007AFF;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: #333;
+    margin: 3px 0;
+    transition: 0.3s;
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+    width: 100%;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    z-index: -2;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: -1;
+}
+
+.hero-content {
+    color: white;
+    z-index: 1;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out forwards;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    opacity: 0;
+    transform: translateY(-50px);
+    animation: slideInFromTop 1s ease-out 0.3s forwards;
+    min-height: 1.2em;
+    width: 100%;
+    overflow: hidden;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: slideInFromBottom 1s ease-out 0.6s forwards;
+}
+
+.hero-cta {
+    opacity: 0;
+    animation: fadeIn 1s ease-out 0.9s forwards;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: #007AFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    transform: translateY(0);
+}
+
+.cta-button:hover {
+    background: #0056CC;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 122, 255, 0.3);
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bounce 2s infinite;
+}
+
+.scroll-arrow {
+    width: 20px;
+    height: 20px;
+    border: 2px solid white;
+    border-top: none;
+    border-right: none;
+    transform: rotate(-45deg);
+}
+
+/* Section Styles */
+section {
+    padding: 100px 0;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.6s ease;
+}
+
+section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #1d1d1f;
+}
+
+.subsection-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    color: #1d1d1f;
+}
+
+/* About Section */
+.about {
+    background: #f5f5f7;
+    position: relative;
+    overflow: hidden;
+}
+
+.about::before {
+    content: 'Professional Development';
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 900;
+    color: rgba(200, 200, 200, 0.15);
+    z-index: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    letter-spacing: 0.05em;
+}
+
+.about .container {
+    position: relative;
+    z-index: 1;
+}
+
+.about-header {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.profile-image {
+    flex-shrink: 0;
+}
+
+.profile-img {
+    width: 200px;
+    height: 200px;
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.profile-placeholder {
+    width: 200px;
+    height: 200px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #007AFF, #5856D6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.about-catchphrase {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #007AFF;
+    margin-top: 1rem;
+}
+
+.about-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.profile-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.profile-item:hover {
+    transform: translateY(-5px);
+}
+
+.profile-item h4 {
+    color: #007AFF;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+/* Journey Section */
+.journey {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+.journey::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.85);
+    z-index: 1;
+}
+
+.journey .container {
+    position: relative;
+    z-index: 2;
+}
+
+.timeline {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 100%;
+    background: #007AFF;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.timeline-item:nth-child(even) {
+    flex-direction: row-reverse;
+}
+
+.timeline-year {
+    background: #007AFF;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    min-width: 120px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.timeline-content {
+    flex: 1;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-content h4 {
+    color: #1d1d1f;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+/* Skills Section */
+.skills {
+    background: #f5f5f7;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.skill-item {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.skill-item:hover {
+    transform: translateY(-10px);
+}
+
+.skill-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.skill-item h3 {
+    color: #1d1d1f;
+    margin-bottom: 0.5rem;
+}
+
+.skill-years {
+    color: #007AFF;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Works Section */
+.works {
+    background: white;
+}
+
+.works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.work-item {
+    background: #f5f5f7;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.work-item:hover {
+    transform: translateY(-5px);
+}
+
+.work-image {
+    height: 200px;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-weight: 600;
+    overflow: hidden;
+}
+
+.work-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.work-item:hover .work-img {
+    transform: scale(1.05);
+}
+
+.work-placeholder {
+    text-align: center;
+    padding: 1rem;
+    font-size: 1.2rem;
+}
+
+.work-content {
+    padding: 1.5rem;
+}
+
+.work-content h3 {
+    color: #1d1d1f;
+    margin-bottom: 0.5rem;
+}
+
+.work-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.work-type {
+    color: #007AFF;
+    font-weight: 600;
+    margin: 0;
+}
+
+.work-date {
+    color: #888;
+    font-size: 0.9rem;
+    font-weight: 400;
+    margin: 0;
+}
+
+.work-tech {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.demo-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #007AFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.demo-link:hover {
+    background: #0056CC;
+    transform: translateY(-1px);
+}
+
+/* Demos Section */
+.demos {
+    background: #f8f9fa;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.service-item {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.service-item:hover {
+    transform: translateY(-10px);
+}
+
+.service-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.service-item h3 {
+    color: #1d1d1f;
+    margin-bottom: 1rem;
+}
+
+/* Services Section */
+.services {
+    background: #f5f5f7;
+}
+
+.contact-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.contact-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background: #007AFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.contact-link:hover {
+    background: #0056CC;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 122, 255, 0.3);
+}
+
+.contact-icon {
+    font-size: 1.5rem;
+}
+
+.pricing {
+    background: #f5f5f7;
+    padding: 2rem;
+    border-radius: 16px;
+}
+
+.pricing h3 {
+    color: #1d1d1f;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.pricing-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.pricing-item h4 {
+    color: #1d1d1f;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.price {
+    color: #007AFF;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.pricing-note {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Footer */
+.footer {
+    background: #1d1d1f;
+    color: white;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+/* Contact Section */
+.contact {
+    background: white;
+}
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInFromBottom {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) translateX(-50%);
+    }
+    40% {
+        transform: translateY(-10px) translateX(-50%);
+    }
+    60% {
+        transform: translateY(-5px) translateX(-50%);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 30px;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+    }
+    
+    .section-title {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+    
+    .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        padding: 2rem 0;
+    }
+    
+    .nav-menu.active {
+        left: 0;
+    }
+    
+    .nav-menu li {
+        margin: 1rem 0;
+    }
+    
+    .hamburger.active span:nth-child(1) {
+        transform: rotate(-45deg) translate(-5px, 6px);
+    }
+    
+    .hamburger.active span:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .hamburger.active span:nth-child(3) {
+        transform: rotate(45deg) translate(-5px, -6px);
+    }
+    
+    .hero-content {
+        padding: 2rem 20px;
+        max-width: 100%;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+        line-height: 1.2;
+        min-height: 1.2em;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .about-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-img {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .profile-placeholder {
+        width: 150px;
+        height: 150px;
+        font-size: 3rem;
+    }
+    
+    .about-catchphrase {
+        font-size: 1.5rem;
+    }
+    
+    .timeline::before {
+        left: 15px;
+        width: 3px;
+    }
+    
+    .timeline-item {
+        flex-direction: column;
+        align-items: stretch;
+        padding-left: 0;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+    
+    .timeline-item:nth-child(even) {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .timeline-year {
+        position: relative;
+        left: 0;
+        margin-bottom: 1rem;
+        min-width: auto;
+        width: fit-content;
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+        white-space: nowrap;
+        align-self: flex-start;
+        margin-left: 40px;
+    }
+    
+    .timeline-content {
+        margin-left: 40px;
+        position: relative;
+    }
+    
+    .timeline-content::before {
+        content: '';
+        position: absolute;
+        left: -32px;
+        top: 20px;
+        width: 12px;
+        height: 12px;
+        background: #007AFF;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #007AFF;
+    }
+    
+    .contact-links {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .contact-link {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+    
+    .container {
+        padding: 0 20px;
+    }
+    
+    section {
+        padding: 70px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2rem;
+        line-height: 1.1;
+        min-height: 1.1em;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .skills-grid,
+    .services-grid,
+    .works-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .pricing-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .work-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+    }
+    
+    .container {
+        padding: 0 15px;
+    }
+}
+    </style>
 </head>
 <body>
     <!-- Navigation -->
@@ -13,9 +986,10 @@
             <div class="nav-logo">マチノヒゲ</div>
             <ul class="nav-menu">
                 <li><a href="#top">TOP</a></li>
-                <li><a href="#about">自己紹介</a></li>
+                <li><a href="#about">プロフィール</a></li>
                 <li><a href="#skills">スキル</a></li>
                 <li><a href="#works">制作実績</a></li>
+                <li><a href="#demos">技術デモ</a></li>
                 <li><a href="#services">サービス</a></li>
                 <li><a href="#contact">お問い合わせ</a></li>
             </ul>
@@ -33,7 +1007,7 @@
             <div class="hero-overlay"></div>
         </div>
         <div class="hero-content">
-            <h1 class="hero-title">学生発の技術力と発想力で、<br>理想を形に</h1>
+            <h1 class="hero-title">技術力と発想力で、<br>理想を形に</h1>
             <p class="hero-subtitle">Dream it. Build it. Change it.</p>
             <div class="hero-cta">
                 <a href="#contact" class="cta-button">お問い合わせ</a>
@@ -49,21 +1023,19 @@
         <div class="container">
             <div class="about-header">
                 <div class="profile-image">
-                    <img src="Account.jpeg" alt="マチノヒゲのプロフィール画像" class="profile-img" 
-                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="profile-placeholder" style="display: none;">
+                    <div class="profile-placeholder">
                         <span>👨‍💻</span>
                     </div>
                 </div>
                 <div class="about-intro">
-                    <h2 class="section-title">自己紹介</h2>
-                    <h3 class="about-catchphrase">最安・最速・最高<br>これぞ「高専クオリティ」</h3>
+                    <h2 class="section-title">プロフィール</h2>
+                    <h3 class="about-catchphrase">最安・最速・最高<br>プロフェッショナル品質</h3>
                 </div>
             </div>
             
             <div class="about-content">
                 <div class="about-text">
-                    <p>はじめまして、マチノ ヒゲと申します。私は「東京高専」で情報工学を専攻している学生です。プログラミング歴は7年で、フロントエンド、バックエンド問わず開発経験があります。若いからこその柔軟な発想力と対応力、そして独学や高専で培ってきた技術力で、お客様の理想を形にするお手伝いをさせていただきます！格安・最速で「高専クオリティ」をお届けします！</p>
+                    <p>はじめまして、マチノ ヒゲと申します。Python歴7年以上のシステムエンジニアとして、フロントエンド、バックエンド問わず幅広い開発経験を積んでまいりました。柔軟な発想力と迅速な対応力、そして培ってきた確かな技術力で、お客様の理想を形にするお手伝いをさせていただきます。高品質なシステムを適正価格でお届けいたします。</p>
                 </div>
                 
                 <div class="profile-details">
@@ -73,24 +1045,20 @@
                             <p>マチノヒゲ</p>
                         </div>
                         <div class="profile-item">
-                            <h4>所属</h4>
-                            <p>国立東京工業高等専門学校　情報工学科<br>介護AI開発プロジェクト「Care Talker」　開発技術統括<br>日本メディカルAI学会　学生会員</p>
+                            <h4>専門分野</h4>
+                            <p>システム開発・Web開発<br>AIシステム構築<br>業務効率化ソリューション</p>
                         </div>
                         <div class="profile-item">
                             <h4>在住</h4>
-                            <p>東京都八王子市</p>
+                            <p>東京都</p>
                         </div>
                         <div class="profile-item">
-                            <h4>趣味</h4>
-                            <p>街歩き</p>
-                        </div>
-                        <div class="profile-item">
-                            <h4>得意分野</h4>
-                            <p>フロントエンド開発全般・Python</p>
+                            <h4>得意技術</h4>
+                            <p>Python・JavaScript・Flutter<br>フロントエンド開発全般</p>
                         </div>
                         <div class="profile-item">
                             <h4>大切にしていること</h4>
-                            <p>お客様のニーズを正確にヒアリングし、オンリーワンの最適なプランをご提案することです。ものづくりには前段階の全体像の設計が大切だと思っていて、納得がいくまで何回でも試行錯誤し、これ以上ない最適なプランを作り上げます！</p>
+                            <p>お客様のニーズを正確にヒアリングし、最適なソリューションをご提案することです。設計から運用まで、長期的な視点でサポートし、納得いただけるまで何度でも改善いたします。</p>
                         </div>
                     </div>
                 </div>
@@ -101,76 +1069,55 @@
     <!-- Journey Section -->
     <section class="journey">
         <div class="container">
-            <h3 class="subsection-title">これまでの歩み</h3>
+            <h3 class="subsection-title">これまでの実績</h3>
             <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-year">2008年</div>
-                    <div class="timeline-content">
-                        <h4>大阪府吹田市で生まれる</h4>
-                        <p>幼少期は祖父の工房で工作に熱中していました。幼い頃から機械やものづくりに興味があり、当時好きだったものは「エレベーター」でした。</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2017年</div>
-                    <div class="timeline-content">
-                        <h4>初めてプログラミングに触れる</h4>
-                        <p>SONYのKOOVというロボットプログラミングができるキットで初めて「プログラミング」の面白さに気づきます。当時は学校から帰るとずっと取り組んでいました。「KOOV」のコンテストで受賞した経験もあります。</p>
-                    </div>
-                </div>
                 <div class="timeline-item">
                     <div class="timeline-year">2018年</div>
                     <div class="timeline-content">
-                        <h4>Raspberry Piを買ってPythonを始める</h4>
-                        <p>これまではノーコードでのプログラミング学習が主でしたが、ここからはハードコードのプログラミング言語を学び始めます。PyQというオンラインの独学支援サービスや、参考書、ネットなどを活用して、Pythonの文法をひたすら勉強していました。この時は、Pythonで小学校の友達とフィットネス管理アプリの開発をしていました。</p>
+                        <h4>プログラミング学習開始</h4>
+                        <p>Python言語での開発をスタート。基礎的なアプリケーション開発から経験を積み始めました。</p>
                     </div>
                 </div>
                 <div class="timeline-item">
                     <div class="timeline-year">2021年</div>
                     <div class="timeline-content">
-                        <h4>東京に憧れを抱く</h4>
-                        <p>親が単身赴任で関東に行くことになり、初めて東京に行った時に心を奪われました。当時の志望校を明石高専から東京高専に変更し、高校生での上京を目指すようになりました。また、この頃から中古スマホの転売で利益を出すようになり、長期休暇は父の家から秋葉原に通い、中古スマホを買い漁っては転売していました。</p>
+                        <h4>本格的な開発活動開始</h4>
+                        <p>中古デバイス関連の技術に興味を持ち、ハードウェアとソフトウェア両方の知識を深めました。技術の幅を広げる重要な転機となりました。</p>
                     </div>
                 </div>
                 <div class="timeline-item">
-                    <div class="timeline-year">2024年4月</div>
+                    <div class="timeline-year">2024年</div>
                     <div class="timeline-content">
-                        <h4>上京</h4>
-                        <p>東京高専を受験し、無事合格。15歳で上京しました。</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-year">2025年4月</div>
-                    <div class="timeline-content">
-                        <h4>情報工学科に配属</h4>
-                        <p>東京高専では2年生から学科に配属されるのですが、無事に志望していた情報工学科へ配属されることができました。</p>
+                        <h4>情報工学分野への専門特化</h4>
+                        <p>より本格的なシステム開発に取り組み、技術力を大幅に向上させました。</p>
                     </div>
                 </div>
                 <div class="timeline-item">
                     <div class="timeline-year">2025年5月</div>
                     <div class="timeline-content">
-                        <h4>個人開発した「駅の発車標風デジタルサイネージ」がSNSで10万バズ</h4>
-                        <p>個人開発した学校の最寄駅の時刻表を表示するサイネージを学内に設置したところ、SNSに投稿され、10万バズを記録。Yahooニュースをはじめ、複数のメディアにも取り上げられました。</p>
+                        <h4>「駅の発車標風デジタルサイネージ」がSNSで10万バズ</h4>
+                        <p>個人開発したリアルタイム表示システムがSNSで話題となり、10万いいねを記録。Yahoo!ニュースをはじめ、複数のメディアにも取り上げられました。</p>
                     </div>
                 </div>
                 <div class="timeline-item">
                     <div class="timeline-year">2025年6月</div>
                     <div class="timeline-content">
-                        <h4>ココナラ始動・アカウント開設</h4>
-                        <p>本格的にココナラでフリーランスエンジニアとしての活動を始めました。</p>
+                        <h4>フリーランス活動本格化</h4>
+                        <p>ココナラでプロフェッショナルとしての活動を開始。企業向けシステム開発を中心に事業を展開しています。</p>
                     </div>
                 </div>
                 <div class="timeline-item">
                     <div class="timeline-year">2025年7月</div>
                     <div class="timeline-content">
-                        <h4>初案件受注・納品</h4>
-                        <p>カット専門店用の予約サイト、デジタルサイネージシステムをデザインから開発・納品の段階までを一通り経験し、無事に納品することができました！</p>
+                        <h4>企業案件の納品実績</h4>
+                        <p>カット専門店向けの予約システム、デジタルサイネージシステムをデザインから開発・納品まで一貫して担当し、成功裏に完了しました。</p>
                     </div>
                 </div>
                 <div class="timeline-item">
                     <div class="timeline-year">現在</div>
                     <div class="timeline-content">
-                        <h4>学生兼フリーランスエンジニアとして活動</h4>
-                        <p>「来年に憧れの街で家を借りる」を目標に現役学生フリーランスエンジニアとして活動しています。</p>
+                        <h4>システムエンジニアとして活動</h4>
+                        <p>予約システム開発を中心に、企業の業務効率化をサポートするシステム開発を手がけています。</p>
                     </div>
                 </div>
             </div>
@@ -186,31 +1133,31 @@
                     <div class="skill-icon">🐍</div>
                     <h3>Python</h3>
                     <p class="skill-years">7年</p>
-                    <p>松尾研究所のGCI Summer（AIモデル構築の基礎講座）も受講済み。AI関連の開発スキルも保有しています。</p>
+                    <p>バックエンド開発、AI・機械学習、データ処理まで幅広く対応。松尾研究所のGCI Summer（AIモデル構築講座）受講済み。</p>
                 </div>
                 <div class="skill-item">
                     <div class="skill-icon">🌐</div>
                     <h3>HTML/CSS/JavaScript</h3>
                     <p class="skill-years">5年</p>
-                    <p>基本的なWebアプリケーション開発が可能です。レスポンシブデザインにも対応しています。</p>
+                    <p>モダンなWebアプリケーション開発が可能です。レスポンシブデザインやSPA開発にも対応しています。</p>
                 </div>
                 <div class="skill-item">
                     <div class="skill-icon">⚡</div>
                     <h3>C</h3>
                     <p class="skill-years">2年</p>
-                    <p>組み込みシステムやマイコン制御、基本的なシステムプログラミングが可能です。</p>
+                    <p>組み込みシステムやマイコン制御、システムプログラミングまで対応可能です。</p>
                 </div>
                 <div class="skill-item">
                     <div class="skill-icon">📱</div>
                     <h3>Flutter</h3>
                     <p class="skill-years">1年</p>
-                    <p>3Dを使用しない基本的なモバイルアプリ開発が可能です。</p>
+                    <p>クロスプラットフォームのモバイルアプリ開発に対応。iOS・Android両対応アプリを効率的に開発します。</p>
                 </div>
                 <div class="skill-item">
                     <div class="skill-icon">☁️</div>
                     <h3>インフラ・ツール</h3>
-                    <p class="skill-years">開発経験あり</p>
-                    <p>Firebase, Cloud Run, Google Apps Script, WordPress、Raspberry Piすべてで開発経験があります。</p>
+                    <p class="skill-years">実務経験あり</p>
+                    <p>Firebase, Cloud Run, Google Apps Script, WordPress, Raspberry Pi等での開発・デプロイメント経験があります。</p>
                 </div>
             </div>
         </div>
@@ -223,66 +1170,98 @@
             <div class="works-grid">
                 <div class="work-item">
                     <div class="work-image">
-                        <img src="filemakeman.jpeg" alt="ファイル大量作成ソフト" class="work-img"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="work-placeholder" style="display: none;">📁 ファイル大量作成ソフト</div>
-                    </div>
-                    <div class="work-content">
-                        <h3>ファイル大量作成ソフト</h3>
-                        <div class="work-meta">
-                            <p class="work-type">個人制作</p>
-                            <p class="work-date">2022年1月</p>
-                        </div>
-                        <p class="work-tech">使用技術：Python</p>
-                        <p>同じ内容のファイルを大量に作成することができるソフトウェアです。</p>
-                    </div>
-                </div>
-                <div class="work-item">
-                    <div class="work-image">
-                        <img src="departure_board.jpeg" alt="駅の発車標風デジタルサイネージ" class="work-img"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="work-placeholder" style="display: none;">🚂 駅の発車標風デジタルサイネージ</div>
+                        <div class="work-placeholder">🚂 駅の発車標風デジタルサイネージ</div>
                     </div>
                     <div class="work-content">
                         <h3>駅の発車標風デジタルサイネージ</h3>
                         <div class="work-meta">
-                            <p class="work-type">個人制作</p>
+                            <p class="work-type">個人開発</p>
                             <p class="work-date">2025年5月</p>
                         </div>
                         <p class="work-tech">使用技術：Flutter, Python</p>
-                        <p>SNSで10万バズを記録した個人制作作品です。</p>
+                        <p>SNSで10万バズを記録したリアルタイム表示システム。Yahoo!ニュース等メディア掲載実績あり。</p>
                     </div>
                 </div>
                 <div class="work-item">
                     <div class="work-image">
-                        <img src="reservation.jpeg" alt="カット専門店の予約サイト" class="work-img"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="work-placeholder" style="display: none;">📅 カット専門店の予約サイト</div>
+                        <div class="work-placeholder">📅 予約システム</div>
                     </div>
                     <div class="work-content">
-                        <h3>カット専門店の予約サイト</h3>
+                        <h3>カット専門店の予約システム</h3>
                         <div class="work-meta">
-                            <p class="work-type">ココナラにて受注</p>
+                            <p class="work-type">企業案件</p>
                             <p class="work-date">2025年7月</p>
                         </div>
                         <p class="work-tech">使用技術：HTML/CSS/JavaScript, Python</p>
-                        <p>デザインから開発・納品まで一通り担当しました。</p>
+                        <p>デザインから開発・納品まで一貫して担当。顧客管理機能も含む総合的なシステムを構築しました。</p>
                     </div>
                 </div>
                 <div class="work-item">
                     <div class="work-image">
-                        <img src="signage.jpeg" alt="カット専門店のデジタルサイネージアプリ" class="work-img"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="work-placeholder" style="display: none;">💻 デジタルサイネージアプリ</div>
+                        <div class="work-placeholder">💻 デジタルサイネージアプリ</div>
                     </div>
                     <div class="work-content">
-                        <h3>カット専門店のデジタルサイネージアプリ</h3>
+                        <h3>店舗向けデジタルサイネージシステム</h3>
                         <div class="work-meta">
-                            <p class="work-type">ココナラにて受注</p>
+                            <p class="work-type">企業案件</p>
                             <p class="work-date">2025年7月</p>
                         </div>
-                        <p class="work-tech">使用技術：Python（Raspberry Piで納品）</p>
-                        <p>Raspberry Piを使用したサイネージシステムを開発・納品しました。</p>
+                        <p class="work-tech">使用技術：Python（Raspberry Pi）</p>
+                        <p>Raspberry Piを使用したリアルタイム情報表示システム。ハードウェア込みで納品しました。</p>
+                    </div>
+                </div>
+                <div class="work-item">
+                    <div class="work-image">
+                        <div class="work-placeholder">📁 業務効率化ツール</div>
+                    </div>
+                    <div class="work-content">
+                        <h3>ファイル大量作成システム</h3>
+                        <div class="work-meta">
+                            <p class="work-type">個人開発</p>
+                            <p class="work-date">2022年</p>
+                        </div>
+                        <p class="work-tech">使用技術：Python</p>
+                        <p>業務効率化を目的とした、同一形式ファイルの大量生成ツール。作業時間を大幅に短縮します。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demos Section -->
+    <section id="demos" class="demos">
+        <div class="container">
+            <h2 class="section-title">技術デモ</h2>
+            <p style="text-align: center; margin-bottom: 3rem; color: #666;">実際に動作するシステムをご体験いただけます</p>
+            <div class="works-grid">
+                <div class="work-item">
+                    <div class="work-image">
+                        <div class="work-placeholder">🗺️ アンケート→口コミ誘導</div>
+                    </div>
+                    <div class="work-content">
+                        <h3>Webアンケート→GoogleMap口コミ誘導システム</h3>
+                        <div class="work-meta">
+                            <p class="work-type">技術デモ</p>
+                            <p class="work-date">2025年</p>
+                        </div>
+                        <p class="work-tech">使用技術：HTML/CSS/JavaScript</p>
+                        <p>顧客満足度調査からGoogleMapレビューへのスムーズな誘導を実現するシステム。実際のビジネスで活用可能です。</p>
+                        <a href="https://machinohige.github.io/quest_demo/" target="_blank" class="demo-link">デモを体験する</a>
+                    </div>
+                </div>
+                <div class="work-item">
+                    <div class="work-image">
+                        <div class="work-placeholder">🤖 AIチャットボット</div>
+                    </div>
+                    <div class="work-content">
+                        <h3>AIチャットボットでの料金シミュレーション</h3>
+                        <div class="work-meta">
+                            <p class="work-type">技術デモ</p>
+                            <p class="work-date">2025年</p>
+                        </div>
+                        <p class="work-tech">使用技術：JavaScript, AI API</p>
+                        <p>自然な対話形式で料金シミュレーションを行うAIチャットボットシステム。顧客対応の自動化に活用できます。</p>
+                        <a href="https://machinohige.github.io/chatbot_demo/" target="_blank" class="demo-link">デモを体験する</a>
                     </div>
                 </div>
             </div>
@@ -297,22 +1276,22 @@
                 <div class="service-item">
                     <div class="service-icon">💻</div>
                     <h3>システム開発</h3>
-                    <p>小規模〜中規模レベルのシステム開発が可能です！業務効率化アプリ・自動化アプリなど</p>
+                    <p>予約システム、管理システム、業務効率化アプリなど、企業の課題解決に特化したシステムを開発します。</p>
                 </div>
                 <div class="service-item">
                     <div class="service-icon">🌐</div>
                     <h3>Web・モバイルアプリ開発</h3>
-                    <p>Web、モバイルアプリ開発を承ります。レスポンシブデザインにも対応しています。</p>
+                    <p>レスポンシブ対応のWebアプリケーションから、クロスプラットフォームのモバイルアプリまで幅広く対応します。</p>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon">🤖</div>
+                    <h3>AI・自動化システム</h3>
+                    <p>AIを活用したチャットボットや、業務プロセスの自動化システムを構築し、生産性向上をサポートします。</p>
                 </div>
                 <div class="service-item">
                     <div class="service-icon">🔧</div>
-                    <h3>電子工作・IoTシステム</h3>
-                    <p>機器の設置が必要な場合も、マイコンの知識もありますので、柔軟に対応できます。</p>
-                </div>
-                <div class="service-item">
-                    <div class="service-icon">📱</div>
-                    <h3>中古スマホ相談</h3>
-                    <p>中古スマホに関してのご相談も承っています。</p>
+                    <h3>IoT・組み込みシステム</h3>
+                    <p>Raspberry Pi等を使用したIoTシステムや、デジタルサイネージの開発・設置まで対応いたします。</p>
                 </div>
             </div>
         </div>
@@ -339,22 +1318,22 @@
                     <div class="pricing-grid">
                         <div class="pricing-item">
                             <h4>小規模システム開発</h4>
-                            <p class="price">4万円程度</p>
+                            <p class="price">4万円〜</p>
                         </div>
                         <div class="pricing-item">
                             <h4>中規模システム開発</h4>
-                            <p class="price">7万円程度</p>
-                        </div>
-                        <div class="pricing-item">
-                            <h4>AIを利用したシステム開発</h4>
                             <p class="price">7万円〜</p>
                         </div>
                         <div class="pricing-item">
-                            <h4>簡単な業務効率化・自動化ソフト</h4>
-                            <p class="price">5千円から2万円程度</p>
+                            <h4>AIシステム開発</h4>
+                            <p class="price">7万円〜</p>
+                        </div>
+                        <div class="pricing-item">
+                            <h4>業務効率化・自動化</h4>
+                            <p class="price">2万円〜</p>
                         </div>
                     </div>
-                    <p class="pricing-note">規模や専門性などで実際の金額は変わります。<br>他のところよりも必ず格安でお受けいたします！<br><strong>まずはお気軽にご相談ください。</strong></p>
+                    <p class="pricing-note">プロジェクトの規模や要件により価格は変動いたします。<br>適正価格で高品質なシステムをお届けします。<br><strong>まずはお気軽にご相談ください。</strong></p>
                 </div>
             </div>
         </div>
@@ -367,6 +1346,119 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // DOM Content Loaded
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Mobile Navigation
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    
+    hamburger.addEventListener('click', function() {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+    
+    // Close mobile menu when clicking on a link
+    document.querySelectorAll('.nav-menu a').forEach(link => {
+        link.addEventListener('click', function() {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
+    
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!hamburger.contains(event.target) && !navMenu.contains(event.target)) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        }
+    });
+    
+    // Scroll Animation for Sections
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                
+                // Add staggered animation for grid items
+                const gridItems = entry.target.querySelectorAll('.skill-item, .work-item, .service-item, .profile-item, .pricing-item');
+                gridItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+                
+                // Add staggered animation for timeline items
+                const timelineItems = entry.target.querySelectorAll('.timeline-item');
+                timelineItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateX(0)';
+                    }, index * 200);
+                });
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all sections
+    document.querySelectorAll('section').forEach(section => {
+        observer.observe(section);
+    });
+    
+    // Initialize grid items with hidden state
+    document.querySelectorAll('.skill-item, .work-item, .service-item, .profile-item, .pricing-item').forEach(item => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(30px)';
+        item.style.transition = 'all 0.6s ease';
+    });
+    
+    // Initialize timeline items with hidden state
+    document.querySelectorAll('.timeline-item').forEach((item, index) => {
+        item.style.opacity = '0';
+        if (index % 2 === 0) {
+            item.style.transform = 'translateX(-50px)';
+        } else {
+            item.style.transform = 'translateX(50px)';
+        }
+        item.style.transition = 'all 0.6s ease';
+    });
+    
+    // Navbar background change on scroll
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+            navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+            navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+        } else {
+            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            navbar.style.boxShadow = 'none';
+        }
+    });
+    
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                const offsetTop = target.offsetTop - 80; // Account for fixed navbar
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+    
+    console.log('Portfolio site loaded successfully! 🚀');
+});
+    </script>
 </body>
 </html>
